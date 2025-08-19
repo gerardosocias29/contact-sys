@@ -1,17 +1,19 @@
 #!/bin/bash
-# Make sure this file has executable permissions, run `chmod +x build-app.sh`
-
-# Exit the script if any command fails
 set -e
 
-# Build assets using NPM
+# Build assets
 npm run build
 
-# Clear cache
+# Clear and cache Laravel components
 php artisan optimize:clear
-
-# Cache the various components of the Laravel application
 php artisan config:cache
 php artisan event:cache
 php artisan route:cache
 php artisan view:cache
+
+# Ensure SQLite exists
+mkdir -p database
+touch database/database.sqlite
+
+# Run migrations and seed
+php artisan migrate --seed --force
